@@ -75,6 +75,14 @@ This compiles the React 19 frontend into `web/dist` and produces the `brokenlens
 
 ## Quick Start
 
+### Version Check
+
+```bash
+brokenlens --version
+brokenlens -v
+brokenlens version
+```
+
 ### Basic Scan
 
 ```bash

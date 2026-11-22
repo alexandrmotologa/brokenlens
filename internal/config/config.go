@@ -11,9 +11,13 @@ import (
 	"time"
 )
 
+// Version defines the release version of BrokenLens.
+const Version = "1.0.0"
+
 // Config holds runtime configuration options for the auditor.
 type Config struct {
 	TargetURL          string
+	ShowVersion        bool
 	Concurrency        int
 	MaxDepth           int
 	MaxURLs            int
@@ -63,7 +67,7 @@ func DefaultConfig() *Config {
 		MaxDepth:           10,
 		MaxURLs:            0,
 		Timeout:            10 * time.Second,
-		UserAgent:          "BrokenLens/1.0 (+https://github.com/alexandrmotologa/brokenlens)",
+		UserAgent:          "BrokenLens/1.0.0 (+https://github.com/alexandrmotologa/brokenlens)",
 		CheckExternal:      true,
 		CheckFragments:     true,
 		CheckMixedContent:  true,
@@ -135,6 +139,8 @@ func ParseFlags(args []string) (*Config, error) {
 	fs.IntVar(&cfg.RateLimitMs, "delay", 0, "Delay in milliseconds between requests per worker")
 	fs.BoolVar(&cfg.Quiet, "quiet", false, "Suppress terminal live spinner and non-error output")
 	fs.BoolVar(&cfg.Quiet, "q", false, "Shorthand for --quiet")
+	fs.BoolVar(&cfg.ShowVersion, "version", false, "Print version information and exit")
+	fs.BoolVar(&cfg.ShowVersion, "v", false, "Shorthand for --version")
 
 	// Pre-process args to separate positional arguments from flags,
 	// allowing flags anywhere (before or after the target URL)
@@ -186,6 +192,8 @@ func ParseFlags(args []string) (*Config, error) {
 			if len(positionalArgs) > 1 {
 				cfg.TargetURL = positionalArgs[1]
 			}
+		} else if firstArg == "version" {
+			cfg.ShowVersion = true
 		} else {
 			cfg.TargetURL = firstArg
 		}
@@ -225,6 +233,10 @@ func ParseFlags(args []string) (*Config, error) {
 
 // Validate checks configuration values and compiles regular expressions.
 func (c *Config) Validate() error {
+	if c.ShowVersion {
+		return nil
+	}
+
 	if c.Concurrency < 1 {
 		c.Concurrency = 1
 	}

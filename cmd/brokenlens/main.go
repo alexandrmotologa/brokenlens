@@ -21,6 +21,11 @@ func main() {
 		os.Exit(2)
 	}
 
+	if cfg.ShowVersion {
+		fmt.Printf("BrokenLens v%s\n", config.Version)
+		return
+	}
+
 	// Standalone server mode from report file
 	if cfg.Serve && cfg.TargetURL == "" && cfg.ReportFile != "" {
 		srv := server.NewServer(cfg, nil)
